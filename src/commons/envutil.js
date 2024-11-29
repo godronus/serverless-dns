@@ -26,6 +26,12 @@ export function onDenoDeploy() {
   return envManager.get("CLOUD_PLATFORM") === "deno-deploy";
 }
 
+export function onFastEdge() {
+  if (!envManager) return false;
+
+  return envManager.get("CLOUD_PLATFORM") === "fastedge";
+}
+
 export function onFastly() {
   if (!envManager) return false;
 
@@ -43,7 +49,13 @@ export function onCloudflare() {
 export function onLocal() {
   if (!envManager) return false;
 
-  return !onFly() && !onDenoDeploy() && !onCloudflare() && !onFastly();
+  return (
+    !onFly() &&
+    !onDenoDeploy() &&
+    !onCloudflare() &&
+    !onFastEdge() &&
+    !onFastly()
+  );
 }
 
 export function hasDisk() {
@@ -57,7 +69,9 @@ export function useMmap() {
 }
 
 export function hasDynamicImports() {
-  if (onDenoDeploy() || onCloudflare() || onFastly()) return false;
+  if (onDenoDeploy() || onCloudflare() || onFastEdge() || onFastly()) {
+    return false;
+  }
   return true;
 }
 
@@ -75,6 +89,12 @@ export function isWorkers() {
   if (!envManager) return false;
 
   return envManager.r() === "worker";
+}
+
+export function isFastEdge() {
+  if (!envManager) return false;
+
+  return envManager.r() === "fastedge";
 }
 
 export function isFastly() {
