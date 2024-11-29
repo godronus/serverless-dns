@@ -17,6 +17,12 @@ module.exports = {
   },
 
   plugins: [
+    // remove "node:" prefix from imports as target is webworker
+    // stackoverflow.com/a/73351738 and github.com/vercel/next.js/issues/28774
+    // github.com/Avansai/next-multilingual/blob/aaad6a7204/src/config/index.ts#L750
+    new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
+      resource.request = resource.request.replace(/^node:/, "");
+    }),
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
     }),
