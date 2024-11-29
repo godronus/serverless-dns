@@ -343,7 +343,9 @@ export default class RethinkPlugin {
     question = await extractDnsQuestion(request);
 
     // not a dns request
-    if (bufutil.emptyBuf(question)) return;
+    if (bufutil.emptyBuf(question)) {
+      return;
+    }
 
     if (isGwReq) io.gatewayAnswersOnly(envutil.gwip4(), envutil.gwip6());
 
@@ -416,6 +418,7 @@ function getRegion(request) {
   } else if (envutil.onFastly()) {
     // TODO: impl for fastly
   }
+  //todo: farq: impl for fastedge
   return "";
 }
 

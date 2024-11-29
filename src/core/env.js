@@ -36,6 +36,11 @@ const defaults = new Map(
       type: "string",
       default: "development",
     },
+    // the env stage fastedge is running in
+    FASTEDGE_ENV: {
+      type: "string",
+      default: "development",
+    },
     // the env stage fastly is running in
     FASTLY_ENV: {
       type: "string",
@@ -46,7 +51,7 @@ const defaults = new Map(
       type: "string",
       default: "development",
     },
-    // the cloud-platform code is deployed on (cloudflare, fly, deno-deploy, fastly)
+    // the cloud-platform code is deployed on (cloudflare, fastedge, fly, deno-deploy, fastly)
     CLOUD_PLATFORM: {
       type: "string",
       // also ref: EnvManager.mostLikelyCloudPlatform()
@@ -254,6 +259,10 @@ function _determineRuntime() {
     return "fastly";
   }
 
+  if (globalThis.fastedge) {
+    return "fastedge";
+  }
+
   if (typeof Deno !== "undefined") {
     return "deno";
   }
@@ -295,6 +304,7 @@ export default class EnvManager {
     if (this.runtime === "worker") return this.get("WORKER_ENV");
     if (this.runtime === "deno") return this.get("DENO_ENV");
     if (this.runtime === "fastly") return this.get("FASTLY_ENV");
+    if (this.runtime === "fastedge") return this.get("FASTEDGE_ENV");
     return null;
   }
 
@@ -321,6 +331,7 @@ export default class EnvManager {
     // if prod, then worker is likely running on cloudflare
     if (this.runtime === "worker") return "cloudflare";
     if (this.runtime === "fastly") return "fastly";
+    if (this.runtime === "fastedge") return "fastedge";
 
     return null;
   }
@@ -351,7 +362,7 @@ export default class EnvManager {
     return env;
   }
 
-  // one of deno, nodejs, fastly, or cloudflare workers
+  // one of deno, fastedge, nodejs, fastly, or cloudflare workers
   r() {
     return this.runtime;
   }
@@ -369,6 +380,8 @@ export default class EnvManager {
       v = Deno.env.get(k);
     } else if (this.runtime === "fastly") {
       v = fastlyEnv.get(k);
+    } else if (this.runtime === "fastedge") {
+      v = fastEdgeEnv.get(k);
     } else if (this.runtime === "worker") {
       v = globalThis.wenv[k];
     }
