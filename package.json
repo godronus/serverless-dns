@@ -13,8 +13,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "./src/build/pre.sh",
     "build": "npx webpack --config webpack.config.cjs",
+    "build:fastedge": "npx webpack --config webpack.fastedge.cjs && npm run fastedge:wasm",
     "build:fastly": "npx webpack --config webpack.fastly.cjs && npm run fastly:wasm",
     "build:fly": "npx webpack --config webpack.fly.cjs",
+    "fastedge:wasm": "npx fastedge-build ./dist/fastedge.js ./dist/fastedge.wasm",
     "fastly:wasm": "npx js-compute-runtime ./dist/fastly.js ./dist/fastly.wasm"
   },
   "repository": {
@@ -39,6 +41,7 @@
     "proxy-protocol-js": "^4.0.5"
   },
   "optionalDependencies": {
+    "@gcoredev/fastedge-sdk-js": "^1.1.1",
     "@fastly/js-compute": "^1.0.1"
   },
   "devDependencies": {
